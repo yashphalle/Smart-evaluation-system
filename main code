@@ -1,0 +1,652 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter.font import BOLD
+from PIL import Image, ImageTk
+from tkinter import filedialog
+from tkinter import messagebox
+import tkinter as tk
+from pdf2image import convert_from_path
+import glob
+import os
+from xlsxwriter.workbook import Workbook
+
+
+
+
+global name,rollno,marks,path
+list1=[]
+list2=[]
+
+name=""
+rollno=0
+marks=0
+
+
+def add_new_data():
+
+    z = tk.Tk()
+
+    z.geometry("600x500")
+
+    
+    container = ttk.Frame(z)
+    canvas = tk.Canvas(container)
+    scrollbar = ttk.Scrollbar(container, orient="vertical", command=canvas.yview)
+    f_F = ttk.Frame(canvas)
+
+    f_F.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=f_F, anchor="nw")
+
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+
+    container.pack(fill=BOTH , expand=True) 
+    canvas.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
+
+
+    def nextbutton():
+        list3=[]
+        f = int(que_no_entry.get())
+       
+        box_list = []
+        marks_list = []
+
+        for i in range(f):
+
+            i += 1
+            g = Frame(f_F)
+            g.pack()
+
+            x = Label(g,text="Question")
+            x.grid(row=1 , column=1 )
+            y = Label(g,text=i)
+            y.grid(row = 1 , column=2 )  
+              
+            v = Text(f_F, height=3)
+            v.pack()
+            box_list.append(v)   
+            
+            g1 = Frame(f_F)
+            g1.pack(anchor=W)
+
+            m = Label(g1,text="Marks for Que -")     
+            m.grid(row=1 , column=1 )
+            n = Label(g1,text=i)
+            n.grid(row = 1 , column=2)
+            u = Label(g1, text="  ")
+            u.grid(row=1,column=3)
+            e = Entry(g1 , width=5)
+            e.grid(row=1, column=4)
+            marks_list.append(e)
+            
+            b = Label(g1,text="\n")
+            b.grid(row=2)
+
+        def save():
+                
+            for j in range(f):
+                   
+                    c = box_list[j]            
+                    k= c.get("1.0" , "end")
+                    k2=k.split(",")
+                    z=k2[:-1]
+                    list1.append(z)
+
+                    r1 = marks_list[j]
+                    c1 = r1.get()
+                    list3.append(c1)
+
+            list2.append(list3)
+
+            print("Keywords : " , list1)
+            print("Marks : ", list2)
+            
+            with open('answers.txt','a') as reading1:
+                reading1.truncate(0)
+                print(list1,file=reading1)
+            with open('marks.txt','a') as reading2:
+                reading2.truncate(0)
+                print(list2,file=reading2)                
+
+
+        k = Button(f_F,text="Save Data" , command=save)        
+        k.pack()
+        
+
+ 
+
+
+    que_no = Label(f_F ,text="Enter no of Questions")
+    que_no.pack()
+    que_no_entry = Entry(f_F)
+    que_no_entry.pack()
+
+    
+    ans_no_button = Button(f_F , text="Next" , command=nextbutton)
+    ans_no_button.pack()
+
+
+    z.mainloop() 
+
+# workbook=Workbook('results.xlsx')
+# worksheet=workbook.add_worksheet()
+# import sqlite3
+# try:
+#     data = sqlite3.connect('temps.db')
+#     cnt = data.cursor()
+#     cnt.execute("CREATE TABLE TEMP (RNo INT NOT NULL , Name TEXT NOT NULL,Marks INT NOT NULL);")
+# except:
+#     pass
+# cnt = data.cursor()   
+
+
+def load_data():
+    fln = filedialog.askopenfilename(initialdir = "/", title ="Select a file", filetypes = (  ("Text Files", "*.txt"),  ("All FIles", "*.*")))
+    a=open(fln,"r")
+    l1=[]
+    
+    count=0
+    while True:
+        k=a.readline()
+        if k!="":
+            count=count+1
+        else :
+            break
+    print(count)
+    a.seek(0)
+    for i in range(0,count):
+        if i==count-1:
+            k=a.readline()
+            
+            list2.append(k.split(","))
+            
+        else:
+            k=a.readline()
+            z=k[0:-1]
+            l1=z.split(",")
+        
+            list1.append(l1)
+           
+    messagebox.showinfo("Notification", "Data Loaded Successfully")
+    print(list2)
+    print(list1)
+    
+def show_image():
+    global path
+    path = filedialog.askopenfilename(initialdir = "/", title ="Select a file", filetypes = (  ("PDF", "*.pdf"),  ("All FIles", "*.*")))
+    print(path)
+    images = convert_from_path(path, 37)
+
+    i = len(path)-1
+    while path[i] != "/":
+        i-=1
+    a = path[0:i+1]
+
+
+    try:
+        os.mkdir(a+"/Roll-1")
+
+    except:
+        pass
+            
+
+    for x in os.listdir(a+"/Roll-1/"):
+            if x.endswith('.png'):
+                os.unlink(a+"/Roll-1/" + x)
+
+
+    path2 = a+"/Roll-1"
+
+
+    for i, image in enumerate(images):
+        fname = 'image'+str(i)+'.png'
+
+        image.save(os.path.join(path2,fname), "PNG")
+
+
+    ###############################################################################
+
+
+    x = path2+"/*.png"
+
+    h = []
+
+
+    for file in glob.glob(x):
+        f = file
+        h.append(f)
+
+
+
+    list1 = []
+
+
+    for i in h:
+
+        i = str(i)
+        new_pic = ImageTk.PhotoImage(file=i)
+    
+        list1.append(new_pic)
+
+
+    ##############################################################################
+
+    a = Tk()
+    
+
+    n = len(list1)
+    j = list1[0]
+
+    global label1
+
+    label1 = Label(image=j)
+    label1.place(x=23 , y=147 , width=325 , height=425 )
+
+
+    def forward(image_number):
+        global label1
+        global b8
+        global b7
+
+        label1.place_forget()
+        label1 = Label(image=list1[image_number-1])
+        
+        b8 = Button(image = img8,borderwidth = 0,highlightthickness = 0, relief="flat", command=lambda:forward(image_number+1))
+        b7 = Button(image = img7,borderwidth = 0,highlightthickness = 0, relief="flat", command=lambda:back(image_number-1))
+        
+        if image_number == n:
+            b8 = Button(image = img8,borderwidth = 0,highlightthickness = 0, relief="flat", state=DISABLED)
+
+        b7.place(x = 35, y = 585,width = 101,height = 38)
+        b8.place(x = 236, y = 585,width = 101,height = 38)
+        label1.place(x=23 , y=147 , width=325 , height=425 )
+        
+    def back(image_number):
+        global label1
+        global b8
+        global b7
+        
+        label1.place_forget()
+        label1 = Label(image=list1[image_number-1])
+        b8 = Button(image = img8,borderwidth = 0,highlightthickness = 0, relief="flat" , command=lambda:forward(image_number+1))
+        b7 = Button(image = img7,borderwidth = 0,highlightthickness = 0, relief="flat", command=lambda:back(image_number-1))
+        
+        if image_number == 1:
+                b7 = Button(image = img7,borderwidth = 0,highlightthickness = 0, relief="flat", state=DISABLED)
+
+        b7.place(x = 35, y = 585,width = 101,height = 38)
+        b8.place(x = 236, y = 585,width = 101,height = 38)
+        label1.place(x=23 , y=147 , width=325 , height=425 )
+
+    img7 = PhotoImage(file = f"img7.png")
+    b7 = Button(image = img7,borderwidth = 0,highlightthickness = 0,command = back,relief = "flat" , state=DISABLED)
+
+    b7.place(x = 35, y = 585,width = 101,height = 38)
+
+    img8 = PhotoImage(file = f"img8.png")
+    b8 = Button(image = img8,borderwidth = 0,highlightthickness = 0,command=lambda: forward(2),relief = "flat")
+
+    b8.place(x = 236, y = 585,width = 101,height = 38)
+
+    def close_show_image():
+        label1.place_forget()
+
+    img6 = PhotoImage(file = f"img6.png")
+    b6 = Button(
+    image = img6,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = close_show_image,
+    relief = "flat")    
+
+    b6.place(
+    x = 835, y = 539,
+    width = 125,
+    height = 43)
+
+
+
+
+
+    a.withdraw()
+    a.mainloop()
+
+    
+
+
+def preview_score():
+    # print(list1)
+    # print(list2)
+    global marks
+    from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+    from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
+    from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+    from msrest.authentication import CognitiveServicesCredentials
+
+    from array import array
+    import os
+    from PIL import Image
+    import sys
+    import time
+
+    textlower2=""
+    # subscription_key = ""
+    # endpoint = ""
+
+    computervision_client = ComputerVisionClient(endpoint, CognitiveServicesCredentials(subscription_key))
+
+ 
+    read_image = open(path, "rb")
+    read_response = computervision_client.read_in_stream(read_image, raw=True)
+    read_operation_location = read_response.headers["Operation-Location"]
+    operation_id = read_operation_location.split("/")[-1]
+
+
+    while True:
+        read_result = computervision_client.get_read_result(operation_id)
+        if read_result.status.lower () not in ['notstarted', 'running']:
+            break
+
+
+    if read_result.status == OperationStatusCodes.succeeded:
+        for text_result in read_result.analyze_result.read_results:
+            for line in text_result.lines:
+             
+           
+                textlower2+=(line.text.lower())
+
+    print(textlower2)
+
+    listindex=[]
+    for i in range(1,51):
+        try:
+            x="q."
+            b=x+str(i)
+            listindex.append(textlower2.index(b))
+        
+        except:
+            pass
+       
+    l=len(listindex)
+
+    responsemain=[]
+    for i in range(0,l+1) :
+        try:
+            responsemain.append(textlower2[listindex[i]:listindex[i+1]])
+        except:
+            pass
+    responsemain.append(textlower2[listindex[l-1]: ])
+   
+    n1=len(list1)
+    finalmarks=0
+    mystring=[]
+    for i in range(0, n1):
+        r=0
+        listb=list1[i]
+
+        n=len(listb)
+        for j in range(0,n):
+            index = (responsemain[i]).find(listb[j])
+            if (index>0):
+                    count = 1
+            else :
+                    count = 0
+            r = r + count
+            om =r*int(list2[0][i])/n
+            
+        print("obtained marks for question no.",i+1,"=",round(om,2))
+        mystring.append("obtained marks for question no."+str(i+1)+"="+str(round(om,2)))
+        finalmarks=finalmarks + round(om,2)
+        marks=finalmarks
+        with open('results.txt','a') as reading:
+            print("Obtaianed marks=",finalmarks,file=reading)
+ 
+    Total_obtained_marks = Label(text=str(finalmarks), font=("Arial", 50, BOLD) , bg="White" , fg="#1FAAF8")
+    Total_obtained_marks.place(
+    x = 712, y = 420,
+    width = 185,
+    height = 58)
+
+    f_div = Frame()
+    f_div.place(x = 380, y = 270 , height=300)
+
+    preview_score_frame = ttk.Frame(f_div)
+
+    preview_score_canvs = tk.Canvas(preview_score_frame , width=233)
+
+    scrollbaaar = ttk.Scrollbar(preview_score_frame, orient="vertical" , command=preview_score_canvs.yview)
+
+    frrrrame = ttk.Frame(preview_score_canvs)
+
+    frrrrame.bind("<Configure>",
+            lambda e: preview_score_canvs.configure(
+                scrollregion=preview_score_canvs.bbox("all")))
+
+    preview_score_canvs.create_window((0, 0), window=frrrrame, anchor="nw")
+    preview_score_canvs.config(yscrollcommand=scrollbaaar.set)
+
+    preview_score_frame.pack(fill=BOTH , expand=True)
+
+
+    preview_score_canvs.pack(side="left", fill="both", expand=True)
+   
+    scrollbaaar.pack(side=RIGHT, fill=Y)
+    
+
+    for i in range(0,n1):
+        ii = Label(frrrrame ,text=mystring[i])
+        ii.pack()
+
+
+
+
+
+def save_student_data():
+    global name,rollno
+    
+    name = r1.get()
+    
+    
+    rollno = r2.get()
+
+    
+    with open('results.txt','a') as reading:
+        print("Name=",name,file=reading)
+        print("Roll no.=",rollno,file=reading)
+
+
+
+
+
+workbook=Workbook('results.xlsx')
+worksheet=workbook.add_worksheet()
+import sqlite3
+try:
+    data = sqlite3.connect('temps.db')
+    cnt = data.cursor()
+    cnt.execute("CREATE TABLE TEMP (RNo INT NOT NULL , Name TEXT NOT NULL,Marks INT NOT NULL);")
+except:
+    pass
+cnt = data.cursor() 
+
+
+def create():
+    
+    cnt.execute("INSERT INTO TEMP VALUES (?,?,?)",(rollno,name,marks))
+    data.commit()
+    cnt.execute('''SELECT * from temp''')
+    worksheet.write(0,1,"RollNo.")
+    worksheet.write(0,2,"Name")
+    worksheet.write(0,3,"Obtained marks")
+    
+
+    for i, row in enumerate (cnt):
+        for j, value in enumerate(row):
+            worksheet.write(i+1,j+1,value)
+    workbook.close()
+    cnt.close()
+    data.close()  
+
+
+
+
+
+window = Tk()
+window.title("Smart Evaluation System")
+window.geometry("982x633")
+label = Label(window)
+label.pack()
+window.configure(bg = "#ffffff")
+canvas = Canvas(
+    window,
+    bg = "#ffffff",
+    height = 633,
+    width = 982,
+    bd = 0,
+    highlightthickness = 0,
+    relief = "ridge")
+canvas.place(x = 0, y = 0)
+
+
+background_img = PhotoImage(file = f"background.png")
+background = canvas.create_image(
+    521.5, 314.5,
+    image=background_img)
+
+entry0_img = PhotoImage(file = f"img_textBox0.png")
+entry0_bg = canvas.create_image(
+    702.0, 189.0,
+    image = entry0_img)
+
+entry0 = Entry(
+    bd = 0,
+    bg = "#dddddd",
+    highlightthickness = 0)
+
+entry0.place(
+    x = 577.0, y = 174,
+    width = 250.0,
+    height = 28)
+
+
+
+entry1_img = PhotoImage(file = f"img_textBox1.png")
+entry1_bg = canvas.create_image(
+    701.0, 150.0,
+    image = entry1_img)
+
+entry1 = Entry(
+    bd = 0,
+    bg = "#dddddd",
+    highlightthickness = 0)
+
+entry1.place(
+    x = 576.0, y = 135,
+    width = 250.0,
+    height = 28)
+
+img0 = PhotoImage(file = f"img0.png")
+b0 = Button(
+    image = img0,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = add_new_data,
+    relief = "flat")
+
+b0.place(
+    x = 22, y = 86,
+    width = 145,
+    height = 52)
+
+img1 = PhotoImage(file = f"img1.png")
+b1 = Button(
+    image = img1,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = load_data,
+    relief = "flat")
+
+b1.place(
+    x = 181, y = 88,
+    width = 144,
+    height = 50)
+
+img2 = PhotoImage(file = f"img2.png")
+b2 = Button(
+    image = img2,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = show_image,
+    relief = "flat")
+
+b2.place(
+    x = 101, y = 320,
+    width = 151,
+    height = 51)
+
+img3 = PhotoImage(file = f"img3.png")
+b3 = Button(
+    image = img3,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = save_student_data,
+    relief = "flat")
+
+b3.place(
+    x = 647, y = 219,
+    width = 110,
+    height = 30)
+
+img4 = PhotoImage(file = f"img4.png")
+b4 = Button(
+    image = img4,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command =create,
+    relief = "flat")
+
+b4.place(
+    x = 690, y = 542,
+    width = 131,
+    height = 38)
+
+img5 = PhotoImage(file = f"img5.png")
+b5 = Button(
+    image = img5,
+    borderwidth = 0,
+    highlightthickness = 0,
+    command = preview_score,
+    relief = "flat")
+
+b5.place(
+    x = 712, y = 270,
+    width = 185,
+    height = 58)
+
+
+
+
+
+r1 = Entry(bg="#DDDDDD",relief = "flat")
+r1.place(
+    x = 576.0, y = 135,
+    width = 250.0,
+    height = 28)
+
+r2 = Entry(bg="#DDDDDD",relief = "flat")
+r2.place(
+    x = 577.0, y = 174,
+    width = 250.0,
+    height = 28)
+
+
+
+window.resizable(False, False)
+window.mainloop()
