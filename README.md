@@ -1,6 +1,6 @@
 Smart-evaluation-system
 
-****************************************************   working part guidline   **************************************************************************************************
+************   working part guidline   *********************
 1. import necessary librabries
   pip install pdf2image 
   pip install xlsxwriter
@@ -31,7 +31,7 @@ extract all files and add location of bin to path
 
 13. Click on save record to save the record an ouput excel file will be created in the present directory
 
-************************************************************  Project Abstract   ************************************************************************************************	 
+**********************  Project Abstract   *************************	 
 
 The whole world is facing a huge crisis of COVID pandemic. Every field in world has been faced by a lot of difficulties.
 We learned a lot of things from the pandemic. Education field was not exception for this. The mobile phones which were not allowed in classrooms, classroom has been shifted
@@ -43,7 +43,7 @@ evaluation of papers / assignments we have made this project.
 
 
 
-*******************************************************************  Innovativeness and Show Stoppers  ****************************************************************************** 
+******************  Innovativeness and Show Stoppers  *******************
        
 We believe that this is completely innovative idea. 
 It’s a solution for real problem faced by our teachers.
