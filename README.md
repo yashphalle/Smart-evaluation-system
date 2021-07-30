@@ -59,5 +59,4 @@ Transparency will be there in results as the full process is automatic.
 
 We can utilize this saved time of teachers to heal today’s damaged educational system due to pandemic and build a new powerful educational system. 
 
-For the sake of hackathon, we will be evaluating based on keywords, but if proper guidance is facilitated we can transform this project into a system with added 
-functionalities such as, to detect correct diagram, grammatical correctness and more. 
+For the sake of hackathon, we will be evaluating based on keywords, we can transform this project into a system with added functionalities such as to detect correct diagram, grammatical correctness and more. 
