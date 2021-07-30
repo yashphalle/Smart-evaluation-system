@@ -1,7 +1,7 @@
 Smart-evaluation-system
 
 ************  installation part guidline   *********************
-1. import necessary librabries
+1. import necessary librabries by 
   pip install pdf2image 
   pip install xlsxwriter
   creat microsoft azure vision api account and get the keys and enpoints. Enter in the wherever asked in code(in line 340-341 ).
