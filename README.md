@@ -1,6 +1,6 @@
 Smart-evaluation-system
 
-************  installation part guidline   *********************
+************  installation part guideline   *********************
 1. import necessary librabries by 
   pip install pdf2image 
   pip install xlsxwriter
